@@ -1,1 +1,780 @@
-# farobot
+# <!DOCTYPE html>
+<html lang="ku">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بۆتی فەرۆ بۆ خوێندکاران</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #f8f9fa;
+            --text-color: #333;
+            --bg-color: #fff;
+            --card-bg: #f8f9fa;
+            --border-color: #ddd;
+        }
+
+        .dark-mode {
+            --primary-color: #FFA500;
+            --secondary-color: #343a40;
+            --text-color: #f8f9fa;
+            --bg-color: #212529;
+            --card-bg: #343a40;
+            --border-color: #495057;
+        }
+
+        .blue-mode {
+            --primary-color: #2196F3;
+        }
+
+        .orange-mode {
+            --primary-color: #FF9800;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        button, .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover, .btn:hover {
+            opacity: 0.9;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .question-container {
+            margin-bottom: 20px;
+        }
+
+        .option {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+
+        .option:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .selected {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .correct {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .incorrect {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .timer {
+            font-size: 24px;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .settings-panel {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--border-color);
+        }
+
+        #logo-preview {
+            max-width: 100px;
+            max-height: 100px;
+            display: block;
+            margin: 10px auto;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .tab {
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background-color: var(--secondary-color);
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab button {
+            background-color: inherit;
+            float: right;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            color: var(--text-color);
+        }
+
+        .tab button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tab button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            animation: fadeEffect 1s;
+        }
+
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        .question-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .question-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .question-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="login-section" class="card">
+            <h1>بۆتی فەرۆ بۆ خوێندکاران</h1>
+            <div class="tab">
+                <button class="tablinks active" onclick="openTab(event, 'student-login')">قوتابی</button>
+                <button class="tablinks" onclick="openTab(event, 'admin-login')">بەڕێوەبەر</button>
+            </div>
+
+            <div id="student-login" class="tabcontent" style="display: block;">
+                <div class="login-form">
+                    <h2>چوونەژوورەوەی قوتابی</h2>
+                    <input type="password" id="student-password" placeholder="پاسۆرد">
+                    <button onclick="studentLogin()">چوونەژوورەوە</button>
+                </div>
+            </div>
+
+            <div id="admin-login" class="tabcontent">
+                <div class="login-form">
+                    <h2>چوونەژوورەوەی بەڕێوەبەر</h2>
+                    <input type="password" id="admin-password" placeholder="پاسۆرد">
+                    <button onclick="adminLogin()">چوونەژوورەوە</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="admin-section" class="card hidden">
+            <h2>بەشی بەڕێوەبەر</h2>
+            <button onclick="logout()">چوونەدەرەوە</button>
+            
+            <div class="settings-panel">
+                <h3>ڕێکخستنەکان</h3>
+                <div>
+                    <label for="system-name">ناوی سیستەم:</label>
+                    <input type="text" id="system-name" value="بۆتی فەرۆ بۆ خوێندکاران">
+                </div>
+                <div>
+                    <label for="logo-upload">لۆگۆ:</label>
+                    <input type="file" id="logo-upload" accept="image/*">
+                    <img id="logo-preview" src="" alt="پێشبینینی لۆگۆ">
+                </div>
+                <div>
+                    <label>ڕەنگ:</label>
+                    <div class="settings-panel">
+                        <div class="color-option" style="background-color: #4CAF50;" onclick="changeColorMode('default')"></div>
+                        <div class="color-option" style="background-color: #2196F3;" onclick="changeColorMode('blue-mode')"></div>
+                        <div class="color-option" style="background-color: #FF9800;" onclick="changeColorMode('orange-mode')"></div>
+                        <div class="color-option" style="background-color: #212529; border: 2px solid #6c757d;" onclick="changeColorMode('dark-mode')"></div>
+                    </div>
+                </div>
+                <button onclick="saveSettings()">پاشکەوتکردنی ڕێکخستنەکان</button>
+            </div>
+
+            <h3>زیادکردنی پرسیار</h3>
+            <div class="card">
+                <textarea id="new-question" placeholder="پرسیارەکە بنوسە"></textarea>
+                <div id="options-container">
+                    <input type="text" class="option-input" placeholder="هەڵبژاردەی ١">
+                    <input type="text" class="option-input" placeholder="هەڵبژاردەی ٢">
+                </div>
+                <button onclick="addOption()">زیادکردنی هەڵبژاردەی تر</button>
+                <select id="correct-answer">
+                    <option value="">وەڵامی ڕاست هەڵبژێرە</option>
+                    <option value="0">هەڵبژاردەی ١</option>
+                    <option value="1">هەڵبژاردەی ٢</option>
+                </select>
+                <button onclick="addQuestion()">زیادکردنی پرسیار</button>
+            </div>
+
+            <h3>پرسیارەکان</h3>
+            <div class="question-list" id="admin-question-list">
+                <!-- Questions will be listed here -->
+            </div>
+        </div>
+
+        <div id="student-section" class="card hidden">
+            <h2 id="student-system-name">بۆتی فەرۆ بۆ خوێندکاران</h2>
+            <button onclick="logout()">چوونەدەرەوە</button>
+            
+            <div id="subject-selection">
+                <h3>بابەت هەڵبژێرە</h3>
+                <select id="subject-select">
+                    <option value="">-- بابەت هەڵبژێرە --</option>
+                </select>
+                <button onclick="startTest()">دەستپێکردن</button>
+            </div>
+
+            <div id="test-section" class="hidden">
+                <div class="timer" id="timer">00:00</div>
+                <div id="question-container" class="question-container">
+                    <!-- Questions will be displayed here -->
+                </div>
+                <button id="next-btn" class="hidden" onclick="nextQuestion()">پرسیاری داهاتوو</button>
+                <button id="submit-btn" class="hidden" onclick="submitTest()">تەواوکردن</button>
+            </div>
+
+            <div id="result-section" class="hidden">
+                <div class="score-display">
+                    <h3>ئەنجامەکان</h3>
+                    <p>نمرەی تۆ: <span id="student-score">0</span> لە <span id="total-questions">0</span></p>
+                    <p>ڕێژە: <span id="percentage">0</span>%</p>
+                </div>
+                <div id="answers-review">
+                    <!-- Answers review will be here -->
+                </div>
+                <button onclick="backToSubjects()">گەڕانەوە بۆ بابەتەکان</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // System data
+        const systemData = {
+            adminPassword: "farzad1234",
+            studentPassword: "botfaro",
+            systemName: "بۆتی فەرۆ بۆ خوێندکاران",
+            colorMode: "",
+            logo: "",
+            subjects: ["کوردی", "ریاضی", "فیزیک", "کیمیا", "ئینگلیزی"],
+            questions: [],
+            currentTest: {
+                subject: "",
+                questions: [],
+                currentQuestionIndex: 0,
+                answers: [],
+                startTime: 0,
+                timerInterval: null
+            }
+        };
+
+        // DOM elements
+        const loginSection = document.getElementById("login-section");
+        const adminSection = document.getElementById("admin-section");
+        const studentSection = document.getElementById("student-section");
+        const adminQuestionList = document.getElementById("admin-question-list");
+        const questionContainer = document.getElementById("question-container");
+        const timerElement = document.getElementById("timer");
+        const resultSection = document.getElementById("result-section");
+        const subjectSelect = document.getElementById("subject-select");
+
+        // Initialize the app
+        function init() {
+            loadData();
+            updateSystemName();
+            populateSubjectSelect();
+            renderAdminQuestionList();
+        }
+
+        // Load data from localStorage
+        function loadData() {
+            const savedData = localStorage.getItem("botfaroSystemData");
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                Object.assign(systemData, parsedData);
+                
+                // Update UI based on saved data
+                document.getElementById("system-name").value = systemData.systemName;
+                if (systemData.logo) {
+                    document.getElementById("logo-preview").src = systemData.logo;
+                }
+                if (systemData.colorMode) {
+                    document.body.classList.add(systemData.colorMode);
+                }
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem("botfaroSystemData", JSON.stringify(systemData));
+        }
+
+        // Tab functionality
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Login functions
+        function studentLogin() {
+            const password = document.getElementById("student-password").value;
+            if (password === systemData.studentPassword) {
+                loginSection.classList.add("hidden");
+                studentSection.classList.remove("hidden");
+            } else {
+                alert("پاسۆرد هەڵەە!");
+            }
+        }
+
+        function adminLogin() {
+            const password = document.getElementById("admin-password").value;
+            if (password === systemData.adminPassword) {
+                loginSection.classList.add("hidden");
+                adminSection.classList.remove("hidden");
+            } else {
+                alert("پاسۆرد هەڵەە!");
+            }
+        }
+
+        function logout() {
+            if (systemData.currentTest.timerInterval) {
+                clearInterval(systemData.currentTest.timerInterval);
+            }
+            
+            loginSection.classList.remove("hidden");
+            adminSection.classList.add("hidden");
+            studentSection.classList.add("hidden");
+            document.getElementById("student-password").value = "";
+            document.getElementById("admin-password").value = "";
+            
+            // Reset test section
+            document.getElementById("test-section").classList.add("hidden");
+            document.getElementById("subject-selection").classList.remove("hidden");
+            resultSection.classList.add("hidden");
+        }
+
+        // Admin functions
+        function addOption() {
+            const optionsContainer = document.getElementById("options-container");
+            const optionCount = optionsContainer.getElementsByClassName("option-input").length;
+            const newOption = document.createElement("input");
+            newOption.type = "text";
+            newOption.className = "option-input";
+            newOption.placeholder = `هەڵبژاردەی ${optionCount + 1}`;
+            optionsContainer.appendChild(newOption);
+            
+            // Update correct answer dropdown
+            const correctAnswerSelect = document.getElementById("correct-answer");
+            const newOptionElement = document.createElement("option");
+            newOptionElement.value = optionCount;
+            newOptionElement.textContent = `هەڵبژاردەی ${optionCount + 1}`;
+            correctAnswerSelect.appendChild(newOptionElement);
+        }
+
+        function addQuestion() {
+            const questionText = document.getElementById("new-question").value.trim();
+            const optionInputs = document.getElementsByClassName("option-input");
+            const correctAnswerIndex = document.getElementById("correct-answer").value;
+            
+            if (!questionText) {
+                alert("پرسیارەکە بنوسە!");
+                return;
+            }
+            
+            const options = [];
+            for (let i = 0; i < optionInputs.length; i++) {
+                const optionText = optionInputs[i].value.trim();
+                if (!optionText) {
+                    alert(`هەڵبژاردەی ${i + 1} بنوسە!`);
+                    return;
+                }
+                options.push(optionText);
+            }
+            
+            if (!correctAnswerIndex) {
+                alert("وەڵامی ڕاست هەڵبژێرە!");
+                return;
+            }
+            
+            const newQuestion = {
+                id: Date.now(),
+                text: questionText,
+                options: options,
+                correctAnswer: parseInt(correctAnswerIndex),
+                subject: systemData.subjects[0] // Default to first subject
+            };
+            
+            systemData.questions.push(newQuestion);
+            saveData();
+            renderAdminQuestionList();
+            
+            // Reset form
+            document.getElementById("new-question").value = "";
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = `
+                <input type="text" class="option-input" placeholder="هەڵبژاردەی ١">
+                <input type="text" class="option-input" placeholder="هەڵبژاردەی ٢">
+            `;
+            document.getElementById("correct-answer").innerHTML = `
+                <option value="">وەڵامی ڕاست هەڵبژێرە</option>
+                <option value="0">هەڵبژاردەی ١</option>
+                <option value="1">هەڵبژاردەی ٢</option>
+            `;
+        }
+
+        function renderAdminQuestionList() {
+            adminQuestionList.innerHTML = "";
+            
+            if (systemData.questions.length === 0) {
+                adminQuestionList.innerHTML = "<p>هیچ پرسیارێک نییە</p>";
+                return;
+            }
+            
+            systemData.questions.forEach((question, index) => {
+                const questionItem = document.createElement("div");
+                questionItem.className = "question-item";
+                
+                const questionText = document.createElement("h4");
+                questionText.textContent = `${index + 1}. ${question.text}`;
+                
+                const optionsList = document.createElement("ul");
+                question.options.forEach((option, i) => {
+                    const optionItem = document.createElement("li");
+                    optionItem.textContent = option;
+                    if (i === question.correctAnswer) {
+                        optionItem.style.color = "green";
+                        optionItem.style.fontWeight = "bold";
+                    }
+                    optionsList.appendChild(optionItem);
+                });
+                
+                const subjectInfo = document.createElement("p");
+                subjectInfo.textContent = `بابەت: ${question.subject}`;
+                
+                const deleteBtn = document.createElement("button");
+                deleteBtn.textContent = "سڕینەوە";
+                deleteBtn.onclick = () => deleteQuestion(question.id);
+                
+                questionItem.appendChild(questionText);
+                questionItem.appendChild(optionsList);
+                questionItem.appendChild(subjectInfo);
+                questionItem.appendChild(deleteBtn);
+                adminQuestionList.appendChild(questionItem);
+            });
+        }
+
+        function deleteQuestion(questionId) {
+            if (confirm("دڵنیای لە سڕینەوەی ئەم پرسیارە؟")) {
+                systemData.questions = systemData.questions.filter(q => q.id !== questionId);
+                saveData();
+                renderAdminQuestionList();
+            }
+        }
+
+        // Settings functions
+        function saveSettings() {
+            systemData.systemName = document.getElementById("system-name").value;
+            
+            const logoUpload = document.getElementById("logo-upload");
+            if (logoUpload.files && logoUpload.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    systemData.logo = e.target.result;
+                    saveData();
+                    updateSystemName();
+                };
+                reader.readAsDataURL(logoUpload.files[0]);
+            } else {
+                saveData();
+                updateSystemName();
+            }
+        }
+
+        function changeColorMode(mode) {
+            // Remove all color modes first
+            document.body.classList.remove("dark-mode", "blue-mode", "orange-mode");
+            
+            if (mode !== "default") {
+                document.body.classList.add(mode);
+            }
+            
+            systemData.colorMode = mode === "default" ? "" : mode;
+            saveData();
+        }
+
+        function updateSystemName() {
+            document.getElementById("student-system-name").textContent = systemData.systemName;
+        }
+
+        // Student test functions
+        function populateSubjectSelect() {
+            subjectSelect.innerHTML = '<option value="">-- بابەت هەڵبژێرە --</option>';
+            systemData.subjects.forEach(subject => {
+                const option = document.createElement("option");
+                option.value = subject;
+                option.textContent = subject;
+                subjectSelect.appendChild(option);
+            });
+        }
+
+        function startTest() {
+            const selectedSubject = subjectSelect.value;
+            if (!selectedSubject) {
+                alert("تکایە بابەتێک هەڵبژێرە!");
+                return;
+            }
+            
+            // Filter questions by subject
+            const subjectQuestions = systemData.questions.filter(q => q.subject === selectedSubject);
+            if (subjectQuestions.length === 0) {
+                alert("هیچ پرسیارێک بۆ ئەم بابەتە نییە!");
+                return;
+            }
+            
+            // Initialize test
+            systemData.currentTest = {
+                subject: selectedSubject,
+                questions: subjectQuestions,
+                currentQuestionIndex: 0,
+                answers: Array(subjectQuestions.length).fill(null),
+                startTime: Date.now(),
+                timerInterval: null
+            };
+            
+            // Start timer
+            systemData.currentTest.timerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
+            
+            // Show test section
+            document.getElementById("subject-selection").classList.add("hidden");
+            document.getElementById("test-section").classList.remove("hidden");
+            
+            // Display first question
+            displayQuestion();
+        }
+
+        function updateTimer() {
+            const elapsedSeconds = Math.floor((Date.now() - systemData.currentTest.startTime) / 1000);
+            const minutes = Math.floor(elapsedSeconds / 60).toString().padStart(2, '0');
+            const seconds = (elapsedSeconds % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+
+        function displayQuestion() {
+            const currentQuestion = systemData.currentTest.questions[systemData.currentTest.currentQuestionIndex];
+            questionContainer.innerHTML = `
+                <h3>پرسیار ${systemData.currentTest.currentQuestionIndex + 1} لە ${systemData.currentTest.questions.length}</h3>
+                <p>${currentQuestion.text}</p>
+                <div id="options-list"></div>
+            `;
+            
+            const optionsList = document.getElementById("options-list");
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement("div");
+                optionElement.className = "option";
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectOption(index);
+                
+                // Mark selected answer if exists
+                if (systemData.currentTest.answers[systemData.currentTest.currentQuestionIndex] === index) {
+                    optionElement.classList.add("selected");
+                }
+                
+                optionsList.appendChild(optionElement);
+            });
+            
+            // Show/hide navigation buttons
+            document.getElementById("next-btn").classList.toggle("hidden", 
+                systemData.currentTest.currentQuestionIndex === systemData.currentTest.questions.length - 1);
+            document.getElementById("submit-btn").classList.toggle("hidden", 
+                systemData.currentTest.currentQuestionIndex !== systemData.currentTest.questions.length - 1);
+        }
+
+        function selectOption(optionIndex) {
+            // Remove selected class from all options
+            const options = document.querySelectorAll(".option");
+            options.forEach(option => option.classList.remove("selected"));
+            
+            // Add selected class to clicked option
+            options[optionIndex].classList.add("selected");
+            
+            // Save answer
+            systemData.currentTest.answers[systemData.currentTest.currentQuestionIndex] = optionIndex;
+        }
+
+        function nextQuestion() {
+            if (systemData.currentTest.answers[systemData.currentTest.currentQuestionIndex] === null) {
+                alert("تکایە وەڵامێک هەڵبژێرە!");
+                return;
+            }
+            
+            systemData.currentTest.currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        function submitTest() {
+            if (systemData.currentTest.answers[systemData.currentTest.currentQuestionIndex] === null) {
+                alert("تکایە وەڵامێک هەڵبژێرە!");
+                return;
+            }
+            
+            // Stop timer
+            clearInterval(systemData.currentTest.timerInterval);
+            
+            // Calculate score
+            let correctAnswers = 0;
+            systemData.currentTest.questions.forEach((question, index) => {
+                if (systemData.currentTest.answers[index] === question.correctAnswer) {
+                    correctAnswers++;
+                }
+            });
+            
+            // Display results
+            document.getElementById("student-score").textContent = correctAnswers;
+            document.getElementById("total-questions").textContent = systemData.currentTest.questions.length;
+            document.getElementById("percentage").textContent = 
+                Math.round((correctAnswers / systemData.currentTest.questions.length) * 100);
+            
+            // Show answers review
+            const answersReview = document.getElementById("answers-review");
+            answersReview.innerHTML = "<h3>پێداچوونەوەی وەڵامەکان</h3>";
+            
+            systemData.currentTest.questions.forEach((question, index) => {
+                const questionReview = document.createElement("div");
+                questionReview.className = "question-item";
+                
+                const questionText = document.createElement("p");
+                questionText.textContent = `${index + 1}. ${question.text}`;
+                
+                const userAnswer = document.createElement("p");
+                const userAnswerIndex = systemData.currentTest.answers[index];
+                userAnswer.textContent = `وەڵامی تۆ: ${question.options[userAnswerIndex]}`;
+                userAnswer.className = userAnswerIndex === question.correctAnswer ? "correct" : "incorrect";
+                
+                const correctAnswer = document.createElement("p");
+                correctAnswer.textContent = `وەڵامی ڕاست: ${question.options[question.correctAnswer]}`;
+                correctAnswer.className = "correct";
+                
+                questionReview.appendChild(questionText);
+                questionReview.appendChild(userAnswer);
+                questionReview.appendChild(correctAnswer);
+                answersReview.appendChild(questionReview);
+            });
+            
+            // Show result section
+            document.getElementById("test-section").classList.add("hidden");
+            resultSection.classList.remove("hidden");
+        }
+
+        function backToSubjects() {
+            resultSection.classList.add("hidden");
+            document.getElementById("subject-selection").classList.remove("hidden");
+        }
+
+        // Initialize the app
+        window.onload = init;
+    </script>
+</body>
+</html>
